@@ -2,6 +2,7 @@ package web
 
 import (
 	"encoding/json"
+	"github.com/lmtani/learning-clean-architecture/pkg/events"
 	"net/http"
 
 	"github.com/lmtani/learning-clean-architecture/internal/entity"
@@ -9,20 +10,20 @@ import (
 )
 
 type OrderHandler struct {
-	// EventDispatcher   events.EventDispatcherInterface
-	OrderRepository entity.OrderRepositoryInterface
-	// OrderCreatedEvent events.EventInterface
+	EventDispatcher   events.EventDispatcherInterface
+	OrderRepository   entity.OrderRepositoryInterface
+	OrderCreatedEvent events.EventInterface
 }
 
-func NewWebOrderHandler(
-	// EventDispatcher events.EventDispatcherInterface,
+func NewOrderHandler(
+	EventDispatcher events.EventDispatcherInterface,
 	OrderRepository entity.OrderRepositoryInterface,
-	// OrderCreatedEvent events.EventInterface,
+	OrderCreatedEvent events.EventInterface,
 ) *OrderHandler {
 	return &OrderHandler{
-		// EventDispatcher:   EventDispatcher,
-		OrderRepository: OrderRepository,
-		// OrderCreatedEvent: OrderCreatedEvent,
+		EventDispatcher:   EventDispatcher,
+		OrderRepository:   OrderRepository,
+		OrderCreatedEvent: OrderCreatedEvent,
 	}
 }
 
@@ -34,7 +35,7 @@ func (h *OrderHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	createOrder := usecase.NewCreateOrderUseCase(h.OrderRepository)
+	createOrder := usecase.NewCreateOrderUseCase(h.OrderRepository, h.OrderCreatedEvent, h.EventDispatcher) // TODO: Inject it
 	output, err := createOrder.Execute(dto)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

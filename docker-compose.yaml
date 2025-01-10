@@ -13,13 +13,13 @@ services:
     volumes:
       - ./internal/infra/database/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
 
-  #rabbitmq:
-  #  image: rabbitmq:3-management
-  #  container_name: rabbitmq
-  #  restart: always
-  #  ports:
-  #    - "5672:5672"
-  #    - "15672:15672"
-  #  environment:
-  #    RABBITMQ_DEFAULT_USER: guest
-  #    RABBITMQ_DEFAULT_PASS: guest
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
