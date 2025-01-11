@@ -2,8 +2,9 @@ package web
 
 import (
 	"encoding/json"
-	"github.com/lmtani/learning-clean-architecture/pkg/events"
 	"net/http"
+
+	"github.com/lmtani/learning-clean-architecture/pkg/events"
 
 	"github.com/lmtani/learning-clean-architecture/internal/entity"
 	"github.com/lmtani/learning-clean-architecture/internal/usecase"

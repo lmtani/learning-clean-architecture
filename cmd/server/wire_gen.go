@@ -8,6 +8,7 @@ package main
 
 import (
 	"database/sql"
+
 	"github.com/google/wire"
 	"github.com/lmtani/learning-clean-architecture/internal/entity"
 	"github.com/lmtani/learning-clean-architecture/internal/infra/database"
@@ -15,9 +16,7 @@ import (
 	"github.com/lmtani/learning-clean-architecture/internal/infra/web"
 	"github.com/lmtani/learning-clean-architecture/internal/usecase"
 	"github.com/lmtani/learning-clean-architecture/pkg/events"
-)
 
-import (
 	_ "github.com/lib/pq"
 )
 

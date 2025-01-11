@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+
 	"github.com/lmtani/learning-clean-architecture/configs"
 	"github.com/lmtani/learning-clean-architecture/internal/infra/event/handler"
 	"github.com/lmtani/learning-clean-architecture/internal/infra/web/server"
@@ -42,6 +43,7 @@ func main() {
 	httpOrderHandler := NewWebOrderHandler(db, eventDispatcher)
 	http.AddHandler("/order", httpOrderHandler.Create)
 	http.Start()
+
 }
 
 func getRabbitMQChannel() *amqp.Channel {

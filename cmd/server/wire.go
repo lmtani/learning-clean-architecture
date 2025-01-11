@@ -5,14 +5,15 @@ package main
 
 import (
 	"database/sql"
-	"github.com/lmtani/learning-clean-architecture/internal/infra/event"
-	"github.com/lmtani/learning-clean-architecture/pkg/events"
 
 	"github.com/google/wire"
+
 	"github.com/lmtani/learning-clean-architecture/internal/entity"
 	"github.com/lmtani/learning-clean-architecture/internal/infra/database"
+	"github.com/lmtani/learning-clean-architecture/internal/infra/event"
 	"github.com/lmtani/learning-clean-architecture/internal/infra/web"
 	"github.com/lmtani/learning-clean-architecture/internal/usecase"
+	"github.com/lmtani/learning-clean-architecture/pkg/events"
 )
 
 var setOrderRepositoryDependency = wire.NewSet(

@@ -14,6 +14,7 @@ type conf struct {
 	GraphQLServerPort string `mapstructure:"GRAPHQL_SERVER_PORT"`
 }
 
+// LoadConfig function is used to load the configuration from the .env file
 func LoadConfig(path string) (*conf, error) {
 	var cfg *conf
 	viper.SetConfigName("app_config")
