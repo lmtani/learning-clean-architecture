@@ -11,20 +11,23 @@ import (
 )
 
 type OrderHandler struct {
-	EventDispatcher   events.EventDispatcherInterface
-	OrderRepository   entity.OrderRepositoryInterface
-	OrderCreatedEvent events.EventInterface
+	EventDispatcher    events.EventDispatcherInterface
+	OrderRepository    entity.OrderRepositoryInterface
+	OrderCreatedEvent  events.EventInterface
+	CreateOrderUseCase *usecase.CreateOrderUseCase
 }
 
 func NewOrderHandler(
 	EventDispatcher events.EventDispatcherInterface,
 	OrderRepository entity.OrderRepositoryInterface,
 	OrderCreatedEvent events.EventInterface,
+	CreateOrderUseCase *usecase.CreateOrderUseCase,
 ) *OrderHandler {
 	return &OrderHandler{
-		EventDispatcher:   EventDispatcher,
-		OrderRepository:   OrderRepository,
-		OrderCreatedEvent: OrderCreatedEvent,
+		EventDispatcher:    EventDispatcher,
+		OrderRepository:    OrderRepository,
+		OrderCreatedEvent:  OrderCreatedEvent,
+		CreateOrderUseCase: CreateOrderUseCase,
 	}
 }
 
@@ -36,8 +39,8 @@ func (h *OrderHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	createOrder := usecase.NewCreateOrderUseCase(h.OrderRepository, h.OrderCreatedEvent, h.EventDispatcher) // TODO: Inject it
-	output, err := createOrder.Execute(dto)
+	output, err := h.CreateOrderUseCase.Execute(dto)
+
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

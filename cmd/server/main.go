@@ -20,6 +20,7 @@ func main() {
 		panic(err)
 	}
 
+	// Connect to database
 	db, err := sql.Open(conf.DBDriver, fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", conf.DBHost, conf.DBPort, conf.DBUser, conf.DBPassword, conf.DBName))
 	if err != nil {
 		panic(err)
@@ -32,6 +33,7 @@ func main() {
 		panic(err)
 	}
 
+	// Connect to RabbitMQ
 	rabbitMQChannel := getRabbitMQChannel()
 	eventDispatcher := events.NewEventDispatcher()
 	eventDispatcher.Register("OrderCreated", &handler.OrderCreatedHandler{
