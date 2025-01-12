@@ -36,3 +36,11 @@ mutation CreateOrder {
   }
 }
 ```
+
+
+## Requerimentos
+
+- protobuf-compiler (https://grpc.io/docs/protoc-installation/)
+- protoc-gen-go (https://grpc.io/docs/languages/go/quickstart/)
+  - Nota: precisei executar: `go get -u google.golang.org/grpc` para resolver o erro em `SupportPackageIsVersion9` do .pb.go.
+- protoc-gen-go-grpc (https://grpc.io/docs/languages/go/quickstart/)
