@@ -10,8 +10,7 @@ docker-compose up -d db
 cp configs/local.template.env cmd/server/.env
 
 # Buildar o projeto
-cd cmd/server
-go build
+make build
 
 # Rodar o projeto
 ./server
@@ -23,4 +22,17 @@ curl -X POST http://localhost:8000/order -d '{
   "price": 100.5,
   "tax": 0.5
 }' -H "Content-Type: application/json"
+```
+
+Para teste com GraphQL, acessar o playground em http://localhost:8080 e rodar a query:
+
+```graphql
+mutation CreateOrder {
+  createOrder(input: {id:"b", Price: 100.5, Tax: 0.5}) {
+    id
+    Price
+    Tax
+    FinalPrice
+  }
+}
 ```

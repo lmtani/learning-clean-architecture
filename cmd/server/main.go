@@ -3,15 +3,14 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"net/http"
 
 	graphql_handler "github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/lmtani/learning-clean-architecture/configs"
-	"github.com/lmtani/learning-clean-architecture/internal/infra/database"
 	"github.com/lmtani/learning-clean-architecture/internal/infra/event/handler"
 	"github.com/lmtani/learning-clean-architecture/internal/infra/graph"
 	"github.com/lmtani/learning-clean-architecture/internal/infra/web/server"
-	"github.com/lmtani/learning-clean-architecture/internal/usecase"
 	"github.com/lmtani/learning-clean-architecture/pkg/events"
 	"github.com/streadway/amqp"
 
@@ -46,21 +45,20 @@ func main() {
 	})
 
 	fmt.Println("Starting web server on port", conf.WebServerPort)
-	http := server.NewWebServer(conf.WebServerPort)
+	webserver := server.NewWebServer(conf.WebServerPort)
 	httpOrderHandler := NewWebOrderHandler(db, eventDispatcher)
-	http.AddHandler("/order", httpOrderHandler.Create)
-	http.Start()
+	webserver.AddHandler("/order", httpOrderHandler.Create)
+	go webserver.Start()
 
-	createOrderUseCase := usecase.NewCreateOrderUseCase(database.NewOrderRepository(db), eventDispatcher)
+	createOrderUseCase := NewCreateOrderUseCase(db, eventDispatcher)
 	srv := graphql_handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{
 		CreateOrderUseCase: *createOrderUseCase,
 	}}))
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)
 
-	fmt.Println("Starting GraphQL server on port", configs.GraphQLServerPort)
-	http.ListenAndServe(":"+configs.GraphQLServerPort, nil)
-
+	fmt.Println("Starting GraphQL server on port", conf.GraphQLServerPort)
+	http.ListenAndServe(":"+conf.GraphQLServerPort, nil)
 }
 
 func getRabbitMQChannel() *amqp.Channel {
