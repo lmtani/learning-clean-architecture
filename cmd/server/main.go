@@ -74,14 +74,12 @@ func main() {
 	}
 	go grpcServer.Serve(lis)
 
-	// Start GraphQL server
-
+	fmt.Println("Starting GraphQL server on port", conf.GraphQLServerPort)
 	srv := graphql_handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{
 		CreateOrderUseCase: *createOrderUseCase,
 	}}))
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)
-	fmt.Println("Starting GraphQL server on port", conf.GraphQLServerPort)
 	http.ListenAndServe(":"+conf.GraphQLServerPort, nil)
 }
 

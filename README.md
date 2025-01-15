@@ -37,6 +37,25 @@ mutation CreateOrder {
 }
 ```
 
+Para teste com gRPC, rodar o cliente:
+
+```bash
+evans -r repl
+package pb
+service OrderService
+call CreateOrder
+
+# id (TYPE_STRING) => fgfff
+# price (TYPE_FLOAT) => 501
+# tax (TYPE_FLOAT) => 0.2
+# {
+#   "finalPrice": 501.2,
+#   "id": "fgfff",
+#   "price": 501,
+#   "tax": 0.2
+# }
+```
+
 
 ## Requerimentos
 
