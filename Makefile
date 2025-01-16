@@ -13,4 +13,10 @@ build: wire generate grpc
 	go build ./... && \
 	cd -
 
-.PHONY: wire generate build
+run: build
+	cd cmd/server && \
+	./server || \
+	cd -
+	
+
+.PHONY: wire generate build run grpc

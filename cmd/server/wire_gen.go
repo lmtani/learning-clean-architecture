@@ -27,7 +27,8 @@ func NewWebOrderHandler(db *sql.DB, eventDispatcher events.EventDispatcherInterf
 	orderRepository := database.NewOrderRepository(db)
 	orderCreated := event.NewOrderCreated()
 	createOrderUseCase := usecase.NewCreateOrderUseCase(orderRepository, orderCreated, eventDispatcher)
-	orderHandler := web.NewOrderHandler(eventDispatcher, orderRepository, orderCreated, createOrderUseCase)
+	listOrdersUseCase := usecase.NewListOrdersUseCase(orderRepository)
+	orderHandler := web.NewOrderHandler(eventDispatcher, orderRepository, orderCreated, createOrderUseCase, listOrdersUseCase)
 	return orderHandler
 }
 
@@ -36,6 +37,12 @@ func NewCreateOrderUseCase(db *sql.DB, eventDispatcher events.EventDispatcherInt
 	orderCreated := event.NewOrderCreated()
 	createOrderUseCase := usecase.NewCreateOrderUseCase(orderRepository, orderCreated, eventDispatcher)
 	return createOrderUseCase
+}
+
+func NewListOrdersUseCase(db *sql.DB) *usecase.ListOrdersUseCase {
+	orderRepository := database.NewOrderRepository(db)
+	listOrdersUseCase := usecase.NewListOrdersUseCase(orderRepository)
+	return listOrdersUseCase
 }
 
 // wire.go:

@@ -4,10 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/lmtani/learning-clean-architecture/pkg/events"
-
 	"github.com/lmtani/learning-clean-architecture/internal/entity"
 	"github.com/lmtani/learning-clean-architecture/internal/usecase"
+	"github.com/lmtani/learning-clean-architecture/pkg/events"
 )
 
 type OrderHandler struct {
@@ -15,6 +14,7 @@ type OrderHandler struct {
 	OrderRepository    entity.OrderRepositoryInterface
 	OrderCreatedEvent  events.EventInterface
 	CreateOrderUseCase *usecase.CreateOrderUseCase
+	ListOrdersUseCase  *usecase.ListOrdersUseCase
 }
 
 func NewOrderHandler(
@@ -22,12 +22,14 @@ func NewOrderHandler(
 	OrderRepository entity.OrderRepositoryInterface,
 	OrderCreatedEvent events.EventInterface,
 	CreateOrderUseCase *usecase.CreateOrderUseCase,
+	ListOrdersUseCase *usecase.ListOrdersUseCase,
 ) *OrderHandler {
 	return &OrderHandler{
 		EventDispatcher:    EventDispatcher,
 		OrderRepository:    OrderRepository,
 		OrderCreatedEvent:  OrderCreatedEvent,
 		CreateOrderUseCase: CreateOrderUseCase,
+		ListOrdersUseCase:  ListOrdersUseCase,
 	}
 }
 
@@ -46,6 +48,20 @@ func (h *OrderHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	err = json.NewEncoder(w).Encode(output)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (h *OrderHandler) List(w http.ResponseWriter, r *http.Request) {
+	orders, err := h.ListOrdersUseCase.Execute()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(orders)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

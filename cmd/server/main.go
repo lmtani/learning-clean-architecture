@@ -55,11 +55,13 @@ func main() {
 	fmt.Println("Starting web server on port", conf.WebServerPort)
 	webserver := server.NewWebServer(conf.WebServerPort)
 	httpOrderHandler := NewWebOrderHandler(db, eventDispatcher)
-	webserver.AddHandler("/order", httpOrderHandler.Create)
+	webserver.AddHandler("POST /order", httpOrderHandler.Create)
+	webserver.AddHandler("GET /orders", httpOrderHandler.List)
 	go webserver.Start()
 
 	// Create use case
 	createOrderUseCase := NewCreateOrderUseCase(db, eventDispatcher)
+	listOrdersUseCase := NewListOrdersUseCase(db)
 
 	// Start gRPC server
 	grpcServer := grpc.NewServer()
@@ -77,6 +79,7 @@ func main() {
 	fmt.Println("Starting GraphQL server on port", conf.GraphQLServerPort)
 	srv := graphql_handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{
 		CreateOrderUseCase: *createOrderUseCase,
+		ListOrdersUseCase:  *listOrdersUseCase,
 	}}))
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)
