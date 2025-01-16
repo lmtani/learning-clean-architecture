@@ -9,6 +9,9 @@ docker-compose up
 # Copiar o arquivo de configuração
 cp configs/local.template.env cmd/server/.env
 
+# Migrar o banco de dados
+make migrate
+
 # Buildar e executar o projeto
 make run
 

@@ -10,6 +10,12 @@ grpc:
 sqlc:
 	sqlc generate
 
+create-migration:
+	migrate create -ext sql -dir internal/infra/database/psql/migrations -seq init
+
+migrate:
+	migrate -path internal/infra/database/psql/migrations -database "postgresql://root:root@localhost:5432/orders?sslmode=disable" -verbose up
+
 build: wire generate sqlc grpc
 	go mod tidy && \
 	cd cmd/server && \
@@ -22,4 +28,4 @@ run: build
 	cd -
 	
 
-.PHONY: wire generate build run grpc sqlc
+.PHONY: wire generate build run grpc sqlc migrate

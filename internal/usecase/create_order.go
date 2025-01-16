@@ -3,9 +3,8 @@ package usecase
 import (
 	"fmt"
 
-	"github.com/lmtani/learning-clean-architecture/pkg/events"
-
 	"github.com/lmtani/learning-clean-architecture/internal/entity"
+	"github.com/lmtani/learning-clean-architecture/pkg/events"
 )
 
 type OrderInputDTO struct {

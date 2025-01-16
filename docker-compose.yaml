@@ -10,8 +10,6 @@ services:
       POSTGRES_DB: orders
     ports:
       - "5432:5432"
-    volumes:
-      - ./internal/infra/database/psql/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
 
   rabbitmq:
     image: rabbitmq:3-management
