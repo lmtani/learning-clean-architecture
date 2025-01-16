@@ -2,20 +2,18 @@ package server
 
 import (
 	"net/http"
-
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
 )
 
 type WebServer struct {
-	Router        chi.Router
+	Router        *http.ServeMux
 	Handlers      map[string]http.HandlerFunc
 	WebServerPort string
 }
 
 func NewWebServer(serverPort string) *WebServer {
+
 	return &WebServer{
-		Router:        chi.NewRouter(),
+		Router:        http.NewServeMux(),
 		Handlers:      make(map[string]http.HandlerFunc),
 		WebServerPort: serverPort,
 	}
@@ -26,9 +24,12 @@ func (s *WebServer) AddHandler(path string, handler http.HandlerFunc) {
 }
 
 func (s *WebServer) Start() {
-	s.Router.Use(middleware.Logger)
 	for path, handler := range s.Handlers {
 		s.Router.Handle(path, handler)
 	}
-	http.ListenAndServe(s.WebServerPort, s.Router)
+
+	// Wrap the mux with LoggingMiddleware
+	loggedRouter := LoggingMiddleware(s.Router)
+
+	http.ListenAndServe(s.WebServerPort, loggedRouter)
 }
