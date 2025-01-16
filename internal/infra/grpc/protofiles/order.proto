@@ -23,5 +23,5 @@ message ListAllOrdersResponse {
 
 service OrderService {
   rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
-  rpc ListAll(ListAllOrdersRequest) returns (ListAllOrdersResponse);
+  rpc ListOrders(ListAllOrdersRequest) returns (ListAllOrdersResponse);
 }

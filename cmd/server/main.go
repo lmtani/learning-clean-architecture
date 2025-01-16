@@ -58,7 +58,7 @@ func main() {
 	webserver := server.NewWebServer(conf.WebServerPort)
 	httpOrderHandler := NewWebOrderHandler(db, eventDispatcher)
 	webserver.AddHandler("POST /order", httpOrderHandler.Create)
-	webserver.AddHandler("GET /orders", httpOrderHandler.List)
+	webserver.AddHandler("GET /order", httpOrderHandler.List)
 	go webserver.Start()
 
 	// Create use case
