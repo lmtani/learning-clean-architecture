@@ -3,25 +3,18 @@
 Para rodar o projeto:
 
 ```bash
-# Iniciar o banco de dados
-docker-compose up -d db
+# Iniciar o banco de dados e o serviço de mensageria
+docker-compose up
 
 # Copiar o arquivo de configuração
 cp configs/local.template.env cmd/server/.env
 
-# Buildar o projeto
-make build
+# Buildar e executar o projeto
+make run
 
-# Rodar o projeto
-./server
-
-# Para testar o endpoint de criação de ordem:
-
-curl -X POST http://localhost:8000/order -d '{
-  "id":"b",
-  "price": 100.5,
-  "tax": 0.5
-}' -H "Content-Type: application/json"
+# Starting web server on port :8000
+# Starting gRPC server on port 50051
+# Starting GraphQL server on port 8080
 ```
 
 ## HTTP
@@ -38,10 +31,10 @@ O serviço HTTP rodará em http://localhost:8000.
   }' -H "Content-Type: application/json"
   ```
 
-- Para listar as ordems criadas:
+- Para listar as ordens criadas:
 
   ```bash
-  curl http://localhost:8000/orders
+  curl http://localhost:8000/order
   ```
 
 ## GraphQL
@@ -94,6 +87,20 @@ call CreateOrder
 #   "id": "fgfff",
 #   "price": 501,
 #   "tax": 0.2
+# }
+
+# Listar ordens
+call ListOrders
+# {
+#   "orders": [
+#     {
+#       "finalPrice": 101,
+#       "id": "abc",
+#       "price": 100.5,
+#       "tax": 0.5
+#     },
+#     ...
+#   ]
 # }
 ```
 
