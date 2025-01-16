@@ -115,3 +115,5 @@ call ListOrders
   - Nota: precisei executar: `go get -u google.golang.org/grpc` para resolver o erro em `SupportPackageIsVersion9` do .pb.go.
 - protoc-gen-go-grpc (https://grpc.io/docs/languages/go/quickstart/)
 - evans (https://github.com/ktr0731/evans)
+- go-migrate (https://github.com/golang-migrate/migrate)
+- docker-compose (https://docs.docker.com/compose/install/)
