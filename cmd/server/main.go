@@ -7,6 +7,8 @@ import (
 	"net/http"
 
 	graphql_handler "github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/handler/extension"
+	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/lmtani/learning-clean-architecture/configs"
 	"github.com/lmtani/learning-clean-architecture/internal/infra/event/handler"
@@ -77,12 +79,26 @@ func main() {
 	go grpcServer.Serve(lis)
 
 	fmt.Println("Starting GraphQL server on port", conf.GraphQLServerPort)
-	srv := graphql_handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{
-		CreateOrderUseCase: *createOrderUseCase,
-		ListOrdersUseCase:  *listOrdersUseCase,
-	}}))
+	// Build your executable schema as before
+	schema := graph.NewExecutableSchema(graph.Config{
+		Resolvers: &graph.Resolver{
+			CreateOrderUseCase: *createOrderUseCase,
+			ListOrdersUseCase:  *listOrdersUseCase,
+		},
+	})
+
+	// Construct the handler directly
+	srv := graphql_handler.New(schema)
+	// Add the transports
+	srv.AddTransport(transport.Options{})
+	srv.AddTransport(transport.POST{})
+	srv.AddTransport(transport.GET{})
+	// Add the extension
+	srv.Use(extension.Introspection{})
+	// Serve your GraphQL endpoint and playground
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)
+
 	http.ListenAndServe(":"+conf.GraphQLServerPort, nil)
 }
 
