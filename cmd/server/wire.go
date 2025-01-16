@@ -4,12 +4,11 @@
 package main
 
 import (
-	"database/sql"
-
 	"github.com/google/wire"
 
 	"github.com/lmtani/learning-clean-architecture/internal/entity"
 	"github.com/lmtani/learning-clean-architecture/internal/infra/database"
+	"github.com/lmtani/learning-clean-architecture/internal/infra/database/psql"
 	"github.com/lmtani/learning-clean-architecture/internal/infra/event"
 	"github.com/lmtani/learning-clean-architecture/internal/infra/web"
 	"github.com/lmtani/learning-clean-architecture/internal/usecase"
@@ -26,7 +25,7 @@ var setOrderCreatedEvent = wire.NewSet(
 	wire.Bind(new(events.EventInterface), new(*event.OrderCreated)),
 )
 
-func NewWebOrderHandler(db *sql.DB, eventDispatcher events.EventDispatcherInterface) *web.OrderHandler {
+func NewWebOrderHandler(queries *psql.Queries, eventDispatcher events.EventDispatcherInterface) *web.OrderHandler {
 	wire.Build(
 		setOrderRepositoryDependency,
 		setOrderCreatedEvent,
@@ -37,7 +36,7 @@ func NewWebOrderHandler(db *sql.DB, eventDispatcher events.EventDispatcherInterf
 	return &web.OrderHandler{}
 }
 
-func NewCreateOrderUseCase(db *sql.DB, eventDispatcher events.EventDispatcherInterface) *usecase.CreateOrderUseCase {
+func NewCreateOrderUseCase(queries *psql.Queries, eventDispatcher events.EventDispatcherInterface) *usecase.CreateOrderUseCase {
 	wire.Build(
 		setOrderRepositoryDependency,
 		setOrderCreatedEvent,
@@ -46,7 +45,7 @@ func NewCreateOrderUseCase(db *sql.DB, eventDispatcher events.EventDispatcherInt
 	return &usecase.CreateOrderUseCase{}
 }
 
-func NewListOrdersUseCase(db *sql.DB) *usecase.ListOrdersUseCase {
+func NewListOrdersUseCase(queries *psql.Queries) *usecase.ListOrdersUseCase {
 	wire.Build(
 		setOrderRepositoryDependency,
 		usecase.NewListOrdersUseCase,

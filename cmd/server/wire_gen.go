@@ -7,24 +7,20 @@
 package main
 
 import (
-	"database/sql"
 	"github.com/google/wire"
 	"github.com/lmtani/learning-clean-architecture/internal/entity"
 	"github.com/lmtani/learning-clean-architecture/internal/infra/database"
+	"github.com/lmtani/learning-clean-architecture/internal/infra/database/psql"
 	"github.com/lmtani/learning-clean-architecture/internal/infra/event"
 	"github.com/lmtani/learning-clean-architecture/internal/infra/web"
 	"github.com/lmtani/learning-clean-architecture/internal/usecase"
 	"github.com/lmtani/learning-clean-architecture/pkg/events"
 )
 
-import (
-	_ "github.com/lib/pq"
-)
-
 // Injectors from wire.go:
 
-func NewWebOrderHandler(db *sql.DB, eventDispatcher events.EventDispatcherInterface) *web.OrderHandler {
-	orderRepository := database.NewOrderRepository(db)
+func NewWebOrderHandler(queries *psql.Queries, eventDispatcher events.EventDispatcherInterface) *web.OrderHandler {
+	orderRepository := database.NewOrderRepository(queries)
 	orderCreated := event.NewOrderCreated()
 	createOrderUseCase := usecase.NewCreateOrderUseCase(orderRepository, orderCreated, eventDispatcher)
 	listOrdersUseCase := usecase.NewListOrdersUseCase(orderRepository)
@@ -32,15 +28,15 @@ func NewWebOrderHandler(db *sql.DB, eventDispatcher events.EventDispatcherInterf
 	return orderHandler
 }
 
-func NewCreateOrderUseCase(db *sql.DB, eventDispatcher events.EventDispatcherInterface) *usecase.CreateOrderUseCase {
-	orderRepository := database.NewOrderRepository(db)
+func NewCreateOrderUseCase(queries *psql.Queries, eventDispatcher events.EventDispatcherInterface) *usecase.CreateOrderUseCase {
+	orderRepository := database.NewOrderRepository(queries)
 	orderCreated := event.NewOrderCreated()
 	createOrderUseCase := usecase.NewCreateOrderUseCase(orderRepository, orderCreated, eventDispatcher)
 	return createOrderUseCase
 }
 
-func NewListOrdersUseCase(db *sql.DB) *usecase.ListOrdersUseCase {
-	orderRepository := database.NewOrderRepository(db)
+func NewListOrdersUseCase(queries *psql.Queries) *usecase.ListOrdersUseCase {
+	orderRepository := database.NewOrderRepository(queries)
 	listOrdersUseCase := usecase.NewListOrdersUseCase(orderRepository)
 	return listOrdersUseCase
 }

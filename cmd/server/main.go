@@ -1,7 +1,7 @@
 package main
 
 import (
-	"database/sql"
+	"context"
 	"fmt"
 	"net"
 	"net/http"
@@ -10,7 +10,9 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/jackc/pgx/v5"
 	"github.com/lmtani/learning-clean-architecture/configs"
+	"github.com/lmtani/learning-clean-architecture/internal/infra/database/psql"
 	"github.com/lmtani/learning-clean-architecture/internal/infra/event/handler"
 	"github.com/lmtani/learning-clean-architecture/internal/infra/graph"
 	"github.com/lmtani/learning-clean-architecture/internal/infra/grpc/pb"
@@ -20,9 +22,6 @@ import (
 	"github.com/streadway/amqp"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
-
-	// postgres
-	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -30,19 +29,16 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	ctx := context.Background()
 
 	// Connect to database
-	db, err := sql.Open(conf.DBDriver, fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", conf.DBHost, conf.DBPort, conf.DBUser, conf.DBPassword, conf.DBName))
+	conn, err := pgx.Connect(ctx, fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", conf.DBHost, conf.DBPort, conf.DBUser, conf.DBPassword, conf.DBName))
 	if err != nil {
 		panic(err)
 	}
-	defer db.Close()
+	defer conn.Close(ctx)
 
-	// Test connection
-	err = db.Ping()
-	if err != nil {
-		panic(err)
-	}
+	queries := psql.New(conn)
 
 	// Connect to RabbitMQ
 	rabbitMQChannel := getRabbitMQChannel()
@@ -56,14 +52,14 @@ func main() {
 	// Start web server
 	fmt.Println("Starting web server on port", conf.WebServerPort)
 	webserver := server.NewWebServer(conf.WebServerPort)
-	httpOrderHandler := NewWebOrderHandler(db, eventDispatcher)
+	httpOrderHandler := NewWebOrderHandler(queries, eventDispatcher)
 	webserver.AddHandler("POST /order", httpOrderHandler.Create)
 	webserver.AddHandler("GET /order", httpOrderHandler.List)
 	go webserver.Start()
 
 	// Create use case
-	createOrderUseCase := NewCreateOrderUseCase(db, eventDispatcher)
-	listOrdersUseCase := NewListOrdersUseCase(db)
+	createOrderUseCase := NewCreateOrderUseCase(queries, eventDispatcher)
+	listOrdersUseCase := NewListOrdersUseCase(queries)
 
 	// Start gRPC server
 	grpcServer := grpc.NewServer()

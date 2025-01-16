@@ -1,0 +1,13 @@
+version: "2"
+sql:
+- schema: "internal/infra/database/psql/schema.sql"
+  queries: "internal/infra/database/psql/queries.sql"
+  engine: "postgresql"
+  gen:
+    go:
+      package: "psql"
+      out: "internal/infra/database/psql"
+      sql_package: "pgx/v5"
+      overrides:
+        - db_type: "pg_catalog.numeric"
+          go_type: "float64"

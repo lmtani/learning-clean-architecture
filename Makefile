@@ -7,7 +7,10 @@ generate:
 grpc:
 	protoc --go_out=. --go-grpc_out=. internal/infra/grpc/protofiles/order.proto
 
-build: wire generate grpc
+sqlc:
+	sqlc generate
+
+build: wire generate sqlc grpc
 	go mod tidy && \
 	cd cmd/server && \
 	go build ./... && \
@@ -19,4 +22,4 @@ run: build
 	cd -
 	
 
-.PHONY: wire generate build run grpc
+.PHONY: wire generate build run grpc sqlc
