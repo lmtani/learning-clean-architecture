@@ -16,7 +16,7 @@ create-migration:
 migrate:
 	migrate -path internal/infra/database/psql/migrations -database "postgresql://root:root@localhost:5432/orders?sslmode=disable" -verbose up
 
-build: generate sqlc grpc wire
+build: sqlc grpc generate wire
 	go mod tidy && \
 	cd cmd/server && \
 	go build ./... && \
