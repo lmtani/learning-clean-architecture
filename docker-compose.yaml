@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   db:
     container_name: orders-db
@@ -21,3 +19,18 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
+
+  server:
+    container_name: orders-server
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - DB_HOST=db
+    volumes:
+      - ./configs/local.template.env:/.env:ro
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+      - rabbitmq

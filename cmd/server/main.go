@@ -29,6 +29,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println(conf)
 	ctx := context.Background()
 
 	// Connect to database
