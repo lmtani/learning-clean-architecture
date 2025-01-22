@@ -42,7 +42,7 @@ func main() {
 	queries := psql.New(conn)
 
 	// Connect to RabbitMQ
-	rabbitMQChannel := getRabbitMQChannel()
+	rabbitMQChannel := getRabbitMQChannel(conf.RABBITMQHost)
 	defer rabbitMQChannel.Close()
 
 	eventDispatcher := events.NewEventDispatcher()
@@ -99,8 +99,8 @@ func main() {
 	http.ListenAndServe(":"+conf.GraphQLServerPort, nil)
 }
 
-func getRabbitMQChannel() *amqp.Channel {
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+func getRabbitMQChannel(rabbitmqHost string) *amqp.Channel {
+	conn, err := amqp.Dial(fmt.Sprintf("amqp://guest:guest@%s:5672/", rabbitmqHost))
 	if err != nil {
 		panic(err)
 	}

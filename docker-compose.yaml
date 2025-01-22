@@ -27,6 +27,7 @@ services:
       dockerfile: Dockerfile
     environment:
       - DB_HOST=db
+      - RABBITMQ_HOST=rabbitmq
     volumes:
       - ./configs/local.template.env:/.env:ro
     ports:
