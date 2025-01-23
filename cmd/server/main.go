@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"time"
 
 	graphql_handler "github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
@@ -29,14 +30,9 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(conf)
 	ctx := context.Background()
 
-	// Connect to database
-	conn, err := pgx.Connect(ctx, fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", conf.DBHost, conf.DBPort, conf.DBUser, conf.DBPassword, conf.DBName))
-	if err != nil {
-		panic(err)
-	}
+	conn := getPostgresConnection(ctx, fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", conf.DBHost, conf.DBPort, conf.DBUser, conf.DBPassword, conf.DBName))
 	defer conn.Close(ctx)
 
 	queries := psql.New(conn)
@@ -100,13 +96,40 @@ func main() {
 }
 
 func getRabbitMQChannel(rabbitmqHost string) *amqp.Channel {
-	conn, err := amqp.Dial(fmt.Sprintf("amqp://guest:guest@%s:5672/", rabbitmqHost))
+	var conn *amqp.Connection
+	var err error
+	for i := 0; i < 5; i++ {
+		conn, err = amqp.Dial(fmt.Sprintf("amqp://guest:guest@%s:5672/", rabbitmqHost))
+		if err == nil {
+			break
+		}
+		fmt.Printf("Failed to connect to RabbitMQ, retrying in 2 seconds... (%d/5)\n", i+1)
+		time.Sleep(2 * time.Second)
+	}
 	if err != nil {
 		panic(err)
 	}
+
 	ch, err := conn.Channel()
 	if err != nil {
 		panic(err)
 	}
 	return ch
+}
+
+func getPostgresConnection(ctx context.Context, connStr string) *pgx.Conn {
+	var conn *pgx.Conn
+	var err error
+	for i := 0; i < 5; i++ {
+		conn, err = pgx.Connect(ctx, connStr)
+		if err == nil {
+			break
+		}
+		fmt.Printf("Failed to connect to PostgreSQL, retrying in 2 seconds... (%d/5)\n", i+1)
+		time.Sleep(2 * time.Second)
+	}
+	if err != nil {
+		panic(err)
+	}
+	return conn
 }
