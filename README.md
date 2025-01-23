@@ -1,5 +1,9 @@
 # GoExpert - Clean Architecture
 
+![test](https://github.com/lmtani/learning-clean-architecture/actions/workflows/main.yml/badge.svg)
+
+![release](https://github.com/lmtani/learning-clean-architecture/actions/workflows/release.yml/badge.svg)
+
 ## Descrição
 
 Este projeto é um exemplo simples de aplicação em Go utilizando Clean Architecture, com suporte a gRPC, GraphQL e HTTP.
