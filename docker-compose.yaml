@@ -31,7 +31,7 @@ services:
     volumes:
       - ./configs/local.template.env:/.env:ro
     ports:
-      - "8080:8080"
+      - "8000:8000"
     depends_on:
       - db
       - rabbitmq

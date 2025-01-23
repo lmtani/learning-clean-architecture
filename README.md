@@ -1,35 +1,39 @@
 # GoExpert - Clean Architecture
 
+## Descrição
 
+Este projeto é um exemplo simples de aplicação em Go utilizando Clean Architecture, com suporte a gRPC, GraphQL e HTTP.
 
-## Requerimentos
-
-- docker compose (https://docs.docker.com/compose/install/)
-
-Para build fora do Docker (Opção 2):
-
-- protobuf-compiler (https://grpc.io/docs/protoc-installation/)
-- protoc-gen-go (https://grpc.io/docs/languages/go/quickstart/)
-  - Nota: precisei executar: `go get -u google.golang.org/grpc` para resolver o erro em `SupportPackageIsVersion9` do .pb.go.
-- protoc-gen-go-grpc (https://grpc.io/docs/languages/go/quickstart/)
-- go-migrate (https://github.com/golang-migrate/migrate)
-
-Para teste com gRPC:
-
-- evans (https://github.com/ktr0731/evans)
-
+Todo código auto-gerado não foi incluído no repositório. Eles são gerados durante o build do servidor. Escolhi não incluir para manter o repositório mais limpo e evitar conflitos de merge.
 
 ## Opção 1: Subir o sistema completo usando Docker Compose
 
+### Requerimentos
+
+- [docker compose](https://docs.docker.com/compose/install/)
+
 ```bash
+# -- Iniciar o sistema completo --
 docker-compose up
 
 # Starting web server on port :8000
 # Starting gRPC server on port 50051
 # Starting GraphQL server on port 8080
+
+# -- Criar o schema do banco de dados --
+make migrate-docker
 ```
 
 ## Opção 2: Subir apenas RabbitMQ e Postgres com Docker Compose, e compilar o servidor localmente
+
+### Requerimentos
+
+- [docker compose](https://docs.docker.com/compose/install/)
+- [protobuf-compiler](https://grpc.io/docs/protoc-installation/)
+- [protoc-gen-go](https://grpc.io/docs/languages/go/quickstart/)
+  - Nota: precisei executar: `go get -u google.golang.org/grpc` para resolver o erro em `SupportPackageIsVersion9` do .pb.go.
+- [protoc-gen-go-grpc](https://grpc.io/docs/languages/go/quickstart/)
+- [go-migrate](https://github.com/golang-migrate/migrate)
 
 ```bash
 # Iniciar o banco de dados e o serviço de mensageria
@@ -103,6 +107,8 @@ Para teste com GraphQL, acessar o playground em http://localhost:8080 e rodar:
   ```
 
 ### gRPC
+
+Requer [evans](https://github.com/ktr0731/evans).
 
 Rodar o client:
 

@@ -22,6 +22,11 @@ migrate:
 	@echo "Running migration"
 	migrate -path internal/infra/database/psql/migrations -database "postgresql://root:root@localhost:5432/orders?sslmode=disable" -verbose up
 
+migrate-docker:
+	docker run -v $(shell pwd)/internal/infra/database/psql/migrations:/migrations \
+	    --network host \
+		migrate/migrate -path=/migrations/ -database "postgresql://root:root@localhost:5432/orders?sslmode=disable" up
+
 build: sqlc grpc generate wire 
 	@echo "Building server"
 	go mod tidy && \
@@ -39,4 +44,4 @@ test:
 	@echo "Running tests with coverage"
 	go test -cover ./...
 
-.PHONY: wire generate build run grpc sqlc migrate test
+.PHONY: wire generate build run grpc sqlc migrate migrate-docker test
