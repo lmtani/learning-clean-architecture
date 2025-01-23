@@ -35,5 +35,8 @@ run: build
 	./server || \
 	cd -
 	
+test:
+	@echo "Running tests with coverage"
+	go test -cover ./...
 
-.PHONY: wire generate build run grpc sqlc migrate
+.PHONY: wire generate build run grpc sqlc migrate test
