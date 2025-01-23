@@ -31,7 +31,7 @@ build: sqlc grpc generate wire
 	@echo "Building server"
 	go mod tidy && \
 	cd cmd/server && \
-	go build ./... && \
+	GOOS=linux CGO_ENABLED=0 go build -ldflags="-w -s" -o server . && \
 	cd -
 
 run: build

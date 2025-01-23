@@ -9,8 +9,7 @@ RUN apt-get update && apt-get install -y protobuf-compiler \
     && go mod download
 
 COPY . .
-WORKDIR /app/cmd/server
-RUN GOOS=linux CGO_ENABLED=0 go build -ldflags="-w -s" -o server .
+RUN make build
 
 FROM scratch
 COPY --from=builder /app/cmd/server/server .
