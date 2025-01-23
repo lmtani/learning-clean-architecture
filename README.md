@@ -1,10 +1,39 @@
 # GoExpert - Clean Architecture
 
-Para rodar o projeto:
+
+
+## Requerimentos
+
+- docker compose (https://docs.docker.com/compose/install/)
+
+Para build fora do Docker (Opção 2):
+
+- protobuf-compiler (https://grpc.io/docs/protoc-installation/)
+- protoc-gen-go (https://grpc.io/docs/languages/go/quickstart/)
+  - Nota: precisei executar: `go get -u google.golang.org/grpc` para resolver o erro em `SupportPackageIsVersion9` do .pb.go.
+- protoc-gen-go-grpc (https://grpc.io/docs/languages/go/quickstart/)
+- go-migrate (https://github.com/golang-migrate/migrate)
+
+Para teste com gRPC:
+
+- evans (https://github.com/ktr0731/evans)
+
+
+## Opção 1: Subir o sistema completo usando Docker Compose
+
+```bash
+docker-compose up
+
+# Starting web server on port :8000
+# Starting gRPC server on port 50051
+# Starting GraphQL server on port 8080
+```
+
+## Opção 2: Subir apenas RabbitMQ e Postgres com Docker Compose, e compilar o servidor localmente
 
 ```bash
 # Iniciar o banco de dados e o serviço de mensageria
-docker-compose up
+docker-compose up db rabbitmq
 
 # Copiar o arquivo de configuração
 cp configs/local.template.env cmd/server/.env
@@ -12,7 +41,7 @@ cp configs/local.template.env cmd/server/.env
 # Migrar o banco de dados
 make migrate
 
-# Buildar e executar o projeto
+# Buildar e executar o projeto localmente
 make run
 
 # Starting web server on port :8000
@@ -20,7 +49,10 @@ make run
 # Starting GraphQL server on port 8080
 ```
 
-## HTTP
+
+## Exemplos
+
+### HTTP
 
 O serviço HTTP rodará em http://localhost:8000.
 
@@ -40,7 +72,7 @@ O serviço HTTP rodará em http://localhost:8000.
   curl http://localhost:8000/order
   ```
 
-## GraphQL
+### GraphQL
 
 Para teste com GraphQL, acessar o playground em http://localhost:8080 e rodar:
 
@@ -70,7 +102,7 @@ Para teste com GraphQL, acessar o playground em http://localhost:8080 e rodar:
   }
   ```
 
-## gRPC
+### gRPC
 
 Rodar o client:
 
@@ -106,14 +138,3 @@ call ListOrders
 #   ]
 # }
 ```
-
-
-## Requerimentos
-
-- protobuf-compiler (https://grpc.io/docs/protoc-installation/)
-- protoc-gen-go (https://grpc.io/docs/languages/go/quickstart/)
-  - Nota: precisei executar: `go get -u google.golang.org/grpc` para resolver o erro em `SupportPackageIsVersion9` do .pb.go.
-- protoc-gen-go-grpc (https://grpc.io/docs/languages/go/quickstart/)
-- evans (https://github.com/ktr0731/evans)
-- go-migrate (https://github.com/golang-migrate/migrate)
-- docker-compose (https://docs.docker.com/compose/install/)
