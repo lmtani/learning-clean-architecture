@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"net"
 	"net/http"
 	"time"
@@ -11,7 +12,10 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jackc/pgx/v5"
+	_ "github.com/lib/pq"
 	"github.com/lmtani/learning-clean-architecture/configs"
 	"github.com/lmtani/learning-clean-architecture/internal/infra/database/psql"
 	"github.com/lmtani/learning-clean-architecture/internal/infra/event/handler"
@@ -30,10 +34,20 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	postgresURL := fmt.Sprintf(
+		"postgres://%s:%s@%s:%s/%s?sslmode=disable",
+		conf.DBUser, conf.DBPassword, conf.DBHost, conf.DBPort, conf.DBName,
+	)
 	ctx := context.Background()
 
-	conn := getPostgresConnection(ctx, fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", conf.DBHost, conf.DBPort, conf.DBUser, conf.DBPassword, conf.DBName))
+	conn := getPostgresConnection(ctx, postgresURL)
 	defer conn.Close(ctx)
+
+	if err := migrateToLatest(ctx, postgresURL, "internal/infra/database/psql/migrations"); err != nil {
+		log.Fatalf("Failed to run migrations: %v", err)
+	}
+
+	log.Println("Database migrated successfully to the latest version!")
 
 	queries := psql.New(conn)
 
@@ -132,4 +146,21 @@ func getPostgresConnection(ctx context.Context, connStr string) *pgx.Conn {
 		panic(err)
 	}
 	return conn
+}
+
+// migrateToLatest migrates the database to the latest version
+func migrateToLatest(ctx context.Context, postgresURL, migrationsPath string) error {
+	// Create a new migrate instance
+	m, err := migrate.New(migrationsPath, postgresURL)
+	if err != nil {
+		return fmt.Errorf("failed to create migrate instance: %w", err)
+	}
+	defer m.Close()
+
+	// Run the migration to the latest version
+	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+		return fmt.Errorf("failed to migrate to the latest version: %w", err)
+	}
+
+	return nil
 }
