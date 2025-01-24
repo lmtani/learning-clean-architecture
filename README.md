@@ -46,9 +46,6 @@ docker-compose up db rabbitmq
 # Copiar o arquivo de configuração
 cp configs/local.template.env cmd/server/.env
 
-# Migrar o banco de dados
-make migrate
-
 # Buildar e executar o projeto localmente
 make run
 

@@ -16,11 +16,7 @@ sqlc:
 
 create-migration:
 	@echo "Creating migration"
-	migrate create -ext sql -dir internal/infra/database/psql/migrations -seq init
-
-migrate:
-	@echo "Running migration"
-	migrate -path internal/infra/database/psql/migrations -database "postgresql://root:root@localhost:5432/orders?sslmode=disable" -verbose up
+	migrate create -ext sql -dir internal/infra/database/psql/migrations -seq init  # change init to your migration name
 
 migrate-docker:
 	docker run -v $(shell pwd)/internal/infra/database/psql/migrations:/migrations \
