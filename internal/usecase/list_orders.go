@@ -22,7 +22,7 @@ func (c *ListOrdersUseCase) Execute() ([]OrderOutputDTO, error) {
 		return nil, err
 	}
 
-	var dtos []OrderOutputDTO
+	dtos := make([]OrderOutputDTO, 0)
 	for _, order := range orders {
 		dto := OrderOutputDTO{
 			ID:         order.ID,
@@ -34,5 +34,4 @@ func (c *ListOrdersUseCase) Execute() ([]OrderOutputDTO, error) {
 	}
 
 	return dtos, nil
-
 }
