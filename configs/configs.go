@@ -9,6 +9,7 @@ type conf struct {
 	DBUser            string `mapstructure:"DB_USER"`
 	DBPassword        string `mapstructure:"DB_PASSWORD"`
 	DBName            string `mapstructure:"DB_NAME"`
+	DBMigrationPath   string `mapstructure:"DB_MIGRATION_PATH"`
 	RABBITMQHost      string `mapstructure:"RABBITMQ_HOST"`
 	WebServerPort     string `mapstructure:"WEB_SERVER_PORT"`
 	GRPCServerPort    string `mapstructure:"GRPC_SERVER_PORT"`

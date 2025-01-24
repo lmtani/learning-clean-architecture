@@ -13,6 +13,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jackc/pgx/v5"
 	_ "github.com/lib/pq"
@@ -43,7 +44,7 @@ func main() {
 	conn := getPostgresConnection(ctx, postgresURL)
 	defer conn.Close(ctx)
 
-	if err := migrateToLatest(ctx, postgresURL, "internal/infra/database/psql/migrations"); err != nil {
+	if err := migrateToLatest(ctx, postgresURL, fmt.Sprintf("file://%s", conf.DBMigrationPath)); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
 

@@ -28,8 +28,10 @@ services:
     environment:
       - DB_HOST=db
       - RABBITMQ_HOST=rabbitmq
+      - DB_MIGRATION_PATH=/migrations
     volumes:
       - ./configs/local.template.env:/.env:ro
+      - ./internal/infra/database/psql/migrations:/migrations:ro
     ports:
       - "8000:8000"
     depends_on:
