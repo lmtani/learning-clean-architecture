@@ -23,9 +23,6 @@ docker-compose up
 # Starting web server on port :8000
 # Starting gRPC server on port 50051
 # Starting GraphQL server on port 8080
-
-# -- Criar o schema do banco de dados --
-make migrate-docker
 ```
 
 ## Opção 2: Subir apenas RabbitMQ e Postgres com Docker Compose, e compilar o servidor localmente
@@ -37,7 +34,6 @@ make migrate-docker
 - [protoc-gen-go](https://grpc.io/docs/languages/go/quickstart/)
   - Nota: precisei executar: `go get -u google.golang.org/grpc` para resolver o erro em `SupportPackageIsVersion9` do .pb.go.
 - [protoc-gen-go-grpc](https://grpc.io/docs/languages/go/quickstart/)
-- [go-migrate](https://github.com/golang-migrate/migrate)
 
 ```bash
 # Iniciar o banco de dados e o serviço de mensageria
