@@ -94,7 +94,7 @@ Para teste com GraphQL, acessar o playground em http://localhost:8080 e rodar:
 
   ```graphql
   query ListOrders {
-    orders {
+    listOrders {
       id
       Price
       Tax
@@ -111,10 +111,12 @@ Rodar o client:
 
 ```bash
 evans -r repl
+
+# Selecionar o serviço
 package pb
+service OrderService
 
 # Criar ordem
-service OrderService
 call CreateOrder
 
 # id (TYPE_STRING) => fgfff
