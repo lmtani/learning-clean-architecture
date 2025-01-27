@@ -34,6 +34,8 @@ services:
       - ./internal/infra/database/psql/migrations:/migrations:ro
     ports:
       - "8000:8000"
+      - "50051:50051"
+      - "8080:8080"
     depends_on:
       - db
       - rabbitmq
