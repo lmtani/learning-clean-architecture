@@ -10,6 +10,17 @@ Este projeto é um exemplo simples de aplicação em Go utilizando Clean Archite
 
 Todo código auto-gerado não foi incluído no repositório. Eles são gerados durante o build do servidor. Escolhi não incluir para manter o repositório mais limpo e evitar conflitos de merge.
 
+## Índice
+
+- [Opção 1: Subir o sistema completo usando Docker Compose](#opção-1-subir-o-sistema-completo-usando-docker-compose)
+  - [Requerimentos](#requerimentos)
+  - [Exemplos](#exemplos)
+    - [HTTP](#http)
+    - [GraphQL](#graphql)
+    - [gRPC](#grpc)
+- [Opção 2: Subir apenas RabbitMQ e Postgres com Docker Compose, e compilar o servidor localmente](#opção-2-subir-apenas-rabbitmq-e-postgres-com-docker-compose-e-compilar-o-servidor-localmente)
+  - [Requerimentos](#requerimentos-1)
+
 ## Opção 1: Subir o sistema completo usando Docker Compose
 
 ### Requerimentos
@@ -24,32 +35,6 @@ docker-compose up
 # Starting gRPC server on port 50051
 # Starting GraphQL server on port 8080
 ```
-
-## Opção 2: Subir apenas RabbitMQ e Postgres com Docker Compose, e compilar o servidor localmente
-
-### Requerimentos
-
-- [docker compose](https://docs.docker.com/compose/install/)
-- [protobuf-compiler](https://grpc.io/docs/protoc-installation/)
-- [protoc-gen-go](https://grpc.io/docs/languages/go/quickstart/)
-  - Nota: precisei executar: `go get -u google.golang.org/grpc` para resolver o erro em `SupportPackageIsVersion9` do .pb.go.
-- [protoc-gen-go-grpc](https://grpc.io/docs/languages/go/quickstart/)
-
-```bash
-# Iniciar o banco de dados e o serviço de mensageria
-docker-compose up db rabbitmq
-
-# Copiar o arquivo de configuração
-cp configs/local.template.env cmd/server/.env
-
-# Buildar e executar o projeto localmente
-make run
-
-# Starting web server on port :8000
-# Starting gRPC server on port 50051
-# Starting GraphQL server on port 8080
-```
-
 
 ## Exemplos
 
@@ -142,4 +127,29 @@ call ListOrders
 #     ...
 #   ]
 # }
+```
+
+## Opção 2: Subir apenas RabbitMQ e Postgres com Docker Compose, e compilar o servidor localmente
+
+### Requerimentos
+
+- [docker compose](https://docs.docker.com/compose/install/)
+- [protobuf-compiler](https://grpc.io/docs/protoc-installation/)
+- [protoc-gen-go](https://grpc.io/docs/languages/go/quickstart/)
+  - Nota: precisei executar: `go get -u google.golang.org/grpc` para resolver o erro em `SupportPackageIsVersion9` do .pb.go.
+- [protoc-gen-go-grpc](https://grpc.io/docs/languages/go/quickstart/)
+
+```bash
+# Iniciar o banco de dados e o serviço de mensageria
+docker-compose up db rabbitmq
+
+# Copiar o arquivo de configuração
+cp configs/local.template.env cmd/server/.env
+
+# Buildar e executar o projeto localmente
+make run
+
+# Starting web server on port :8000
+# Starting gRPC server on port 50051
+# Starting GraphQL server on port 8080
 ```
